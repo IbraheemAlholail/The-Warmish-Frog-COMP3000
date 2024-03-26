@@ -14,7 +14,7 @@ public class Knockback : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
 
-        if (collision.gameObject.CompareTag("breakable") && this.gameObject.CompareTag("Player"))
+        if (collision.gameObject.CompareTag("breakable") && this.gameObject.CompareTag("PlayerAttack"))
         {
             collision.GetComponent<Pots>().destroy();
         }

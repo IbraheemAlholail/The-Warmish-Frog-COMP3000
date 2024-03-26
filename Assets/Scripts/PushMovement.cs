@@ -3,59 +3,69 @@ using UnityEngine;
 public class PushableRock : MonoBehaviour
 {
     private Rigidbody2D rb;
-    private Rigidbody2D playerRb;
     private Transform playerTransform;
-    private FixedJoint2D joint;
-    private Vector2 pos;
-    private bool isPushing = false;
-    private bool isPulling = false;
+    private Vector2 lastPosition;
+    public bool isPushing = false;
+    public bool isPulling = false;
+    Vector2 change;
+
 
     public float pushForce = 10f;
     public float maxDistanceToPush = 2f;
+    public float minDistanceToPull = 2f;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        pos = transform.position;
-        joint = GetComponent<FixedJoint2D>();
+        lastPosition = transform.position;
 
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
-        playerRb = GameObject.FindGameObjectWithTag("Player").GetComponent<Rigidbody2D>();
-        
+
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
+        checkForPull();
         if (isPushing)
         {
-            joint.enabled = false;
-            Vector2 movementDirection = (Vector2)transform.position - pos;
+            Vector2 movementDirection = (Vector2)transform.position - lastPosition;
 
             if (movementDirection != Vector2.zero)
             {
                 rb.AddForce(movementDirection.normalized * pushForce);
             }
         }
-        if (isPulling)
+        else if (isPulling)
         {
-            joint.enabled = true;
-            joint.connectedBody = playerRb;
-            Debug.Log(playerRb);
+            float horizontalInput = Input.GetAxisRaw("Horizontal");
+            float verticalInput = Input.GetAxisRaw("Vertical");
+            change = Vector2.zero;
+            change.x = horizontalInput;
+            change.y = verticalInput;
+            change.Normalize();
+            change *= 5 * Time.fixedDeltaTime;
+
+
+            if (change != Vector2.zero)
+            {
+                rb.MovePosition(rb.position + change/2);
+            }
         }
-        pos = transform.position;
+        else
+        {
+            rb.velocity = Vector2.zero; // Stop the rock if neither pushing nor pulling
+        }
+
+        lastPosition = transform.position;
     }
+
 
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        PlayerMovement player = collision.collider.GetComponent<PlayerMovement>();
-        if ((collision.collider.CompareTag("Player") || collision.collider.CompareTag("Rock")) && !collision.collider.isTrigger && player.currentState != PlayerState.pulling)
+        if ((collision.collider.CompareTag("Player") || collision.collider.CompareTag("Rock")) && !collision.collider.isTrigger)
         {
             isPushing = true;
-        }
-        else if (player.currentState == PlayerState.pulling)
-        {
-            isPulling = true;
         }
     }
 
@@ -64,9 +74,23 @@ public class PushableRock : MonoBehaviour
         if ((collision.collider.CompareTag("Player") || collision.collider.CompareTag("Rock")) && !collision.collider.isTrigger)
         {
             isPushing = false;
-            isPulling = false;
             rb.velocity = Vector2.zero;
-            joint.connectedBody = null;
+        }
+    }
+    private void checkForPull()
+    {
+        if (Vector2.Distance(playerTransform.position, lastPosition) <= minDistanceToPull && Input.GetButton("pull"))
+        {
+            if (Vector2.Distance(playerTransform.position, lastPosition) > minDistanceToPull)
+            {
+                isPulling = false;
+
+            }
+            isPulling = true;
+        }
+        else
+        {
+            isPulling = false;
         }
     }
 }

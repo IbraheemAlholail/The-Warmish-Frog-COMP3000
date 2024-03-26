@@ -8,6 +8,7 @@ TagManager:
   - Enemies
   - Rock
   - Button
+  - PlayerAttack
   layers:
   - Default
   - TransparentFX

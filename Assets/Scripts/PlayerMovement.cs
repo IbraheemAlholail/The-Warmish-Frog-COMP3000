@@ -156,6 +156,7 @@ public class PlayerMovement : MonoBehaviour
             yield return new WaitForSeconds(knockTime);
             rb2d.velocity = Vector2.zero;
             currentState = PlayerState.idle;
+            rb2d.velocity = Vector2.zero;
         }
     }
 
