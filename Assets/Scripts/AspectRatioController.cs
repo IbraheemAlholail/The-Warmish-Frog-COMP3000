@@ -1,25 +1,24 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class EnforceAspectRatio : MonoBehaviour
+public class AspectRatioUtility : MonoBehaviour
 {
-    // Use this for initialization
     void Start()
     {
-        // set the desired aspect ratio (the values in this example are
-        // hard-coded for 16:9, but you could make them into public
-        // variables instead so you can set them at design time)
-        float targetaspect = 16.0f / 9.0f;
+        Adjust();
+    }
 
-        // determine the game window's current aspect ratio
+    public void Adjust()
+    {
+        float targetaspect = 4.0f / 3.0f;
+
         float windowaspect = (float)Screen.width / (float)Screen.height;
 
-        // current viewport height should be scaled by this amount
         float scaleheight = windowaspect / targetaspect;
 
-        // obtain camera component so we can modify its viewport
         Camera camera = GetComponent<Camera>();
 
-        // if scaled height is less than current height, add letterbox
         if (scaleheight < 1.0f)
         {
             Rect rect = camera.rect;
@@ -31,7 +30,7 @@ public class EnforceAspectRatio : MonoBehaviour
 
             camera.rect = rect;
         }
-        else // add pillarbox
+        else
         {
             float scalewidth = 1.0f / scaleheight;
 
@@ -44,6 +43,6 @@ public class EnforceAspectRatio : MonoBehaviour
 
             camera.rect = rect;
         }
-    }
 
+    }
 }

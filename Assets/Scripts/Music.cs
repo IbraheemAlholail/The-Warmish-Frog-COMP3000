@@ -6,17 +6,20 @@ using UnityEngine.UI;
 public class Music : MonoBehaviour
 {
     public AudioSource musicSource;
-    // change button source image to reflect current state
     public GameObject musicButton;
     public Sprite unmuted;
     public Sprite muted;
-    // Start is called before the first frame update
+    public Slider volumeSlider;
 
 
     void Start()
     {
         musicSource.Play();
         
+    }
+    private void Update()
+    {
+        musicSource.volume = volumeSlider.value;
     }
     public void toggleMute()
     {
@@ -31,4 +34,5 @@ public class Music : MonoBehaviour
             musicButton.GetComponent<UnityEngine.UI.Image>().sprite = muted;
         }
     }
+
 }

@@ -7,12 +7,11 @@ using UnityEngine.SceneManagement;
 public class MainMenu : MonoBehaviour
 {
     public Scene scene;
-    // play music while in main menu, but not in game
-    //public AudioSource mainMenuMusic;
-
-
+    public GameObject mainMenu;
+    public GameObject optionsMenu;
     void Start()
     {
+
     }
 
     void Update()
@@ -22,7 +21,6 @@ public class MainMenu : MonoBehaviour
     public void loadGame()
     {
         Time.timeScale = 1f;
-        //mainMenuMusic.Stop();
         SceneManager.LoadScene("Overworld");
     }
     public void quitGame()
@@ -33,6 +31,20 @@ public class MainMenu : MonoBehaviour
     public void loadOptions()
     {
         SceneManager.LoadScene("OptionsMenu");
+    }
+    public void optionsSwitch()
+    {
+        // if the active panel is the main menu, switch to the options menu and vice versa
+        if (mainMenu.activeSelf)
+        {
+            mainMenu.SetActive(false);
+            optionsMenu.SetActive(true);
+        }
+        else
+        {
+            mainMenu.SetActive(true);
+            optionsMenu.SetActive(false);
+        }
     }
     
 }
