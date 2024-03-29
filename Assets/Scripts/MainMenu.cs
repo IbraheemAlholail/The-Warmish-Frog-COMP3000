@@ -34,7 +34,6 @@ public class MainMenu : MonoBehaviour
     }
     public void optionsSwitch()
     {
-        // if the active panel is the main menu, switch to the options menu and vice versa
         if (mainMenu.activeSelf)
         {
             mainMenu.SetActive(false);

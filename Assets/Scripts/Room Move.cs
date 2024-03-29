@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,8 +14,7 @@ public class RoomMove : MonoBehaviour
 
     public bool hasTitle;
     public string titleText;
-    public GameObject textObject;
-    public Text textOnObject;
+    public TextMeshProUGUI textOnScreen;
     public float displayTime;
     public Color startingTextColor;
     public int textSize;
@@ -25,16 +25,9 @@ public class RoomMove : MonoBehaviour
 
     private Coroutine placeNameCoroutine;
 
-    // Start is called before the first frame update
     void Start()
     {
         cam = Camera.main.GetComponent<CameraMovement>();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -47,11 +40,7 @@ public class RoomMove : MonoBehaviour
 
             if (hasTitle)
             {
-                if (placeNameCoroutine != null)
-                {
-
-                    StopAllCoroutines();
-                }
+                StopAllCoroutines();
                 placeNameCoroutine = StartCoroutine(placeNameCo());
             }
         }
@@ -59,38 +48,41 @@ public class RoomMove : MonoBehaviour
 
     private IEnumerator placeNameCo()
     {
+        textOnScreen.enabled = true;
+        textOnScreen.text = titleText;
+        textOnScreen.fontSize = textSize;
 
-        textObject.SetActive(true);
-        textOnObject.text = titleText;
-        textOnObject.fontSize = textSize;
-
-        Vector3 startPos = textObject.transform.position;
+        RectTransform rectTransform = textOnScreen.GetComponent<RectTransform>();
+        Vector3 startPos = rectTransform.localPosition;
         startPos.y = startPositionY;
-        textObject.transform.position = startPos;
+        rectTransform.localPosition = startPos;
 
         Color textColor = startingTextColor;
+        textColor.a = 0f;
+        textOnScreen.color = textColor;
 
         float elapsedTime = 0f;
 
+        // Fade in and move text from startPositionY to endPositionY
         while (elapsedTime < fadeInDuration)
         {
-            float newY = Mathf.Lerp(startPositionY, endPositionY, elapsedTime / fadeInDuration);
-            textObject.transform.position = new Vector3(startPos.x, newY, startPos.z);
+            float t = elapsedTime / fadeInDuration;
+            textColor.a = Mathf.Lerp(0f, 1f, t);
+            textOnScreen.color = textColor;
 
-            float alpha = Mathf.Lerp(0f, 1f, elapsedTime / fadeInDuration);
-            textColor.a = alpha;
-            textOnObject.color = textColor;
+            Vector3 newPos = new Vector3(startPos.x, Mathf.Lerp(startPositionY, endPositionY, t), startPos.z);
+            rectTransform.localPosition = newPos;
 
             elapsedTime += Time.deltaTime;
-            yield return null;
+            yield return null; // Wait for the next frame
         }
 
-        textObject.transform.position = new Vector3(startPos.x, endPositionY, startPos.z);
+        // Ensure the final position and alpha are set correctly
+        rectTransform.localPosition = new Vector3(startPos.x, endPositionY, startPos.z);
         textColor.a = 1f;
-        textOnObject.color = textColor;
-
+        textOnScreen.color = textColor;
 
         yield return new WaitForSeconds(displayTime);
-        textObject.SetActive(false);
+        textOnScreen.enabled = false;
     }
 }
