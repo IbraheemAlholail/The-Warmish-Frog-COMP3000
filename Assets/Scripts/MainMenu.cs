@@ -9,15 +9,6 @@ public class MainMenu : MonoBehaviour
     public Scene scene;
     public GameObject mainMenu;
     public GameObject optionsMenu;
-    void Start()
-    {
-
-    }
-
-    void Update()
-    {
-        
-    }
     public void loadGame()
     {
         Time.timeScale = 1f;

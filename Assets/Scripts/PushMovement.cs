@@ -1,18 +1,20 @@
 using UnityEngine;
 
-public class PushableRock : MonoBehaviour
+public class PushMovement : MonoBehaviour
 {
     private Rigidbody2D rb;
     private Transform playerTransform;
     private Vector2 lastPosition;
-    public bool isPushing = false;
-    public bool isPulling = false;
+    private bool isPushing = false;
+    private bool isPulling = false;
     Vector2 change;
 
 
     public float pushForce = 10f;
     public float maxDistanceToPush = 2f;
     public float minDistanceToPull = 2f;
+
+    public bool solid = false;
 
     private void Start()
     {
@@ -23,8 +25,9 @@ public class PushableRock : MonoBehaviour
 
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
+        if (solid) rb.bodyType = RigidbodyType2D.Static;
         checkForPull();
         if (isPushing)
         {
@@ -53,7 +56,7 @@ public class PushableRock : MonoBehaviour
         }
         else
         {
-            rb.velocity = Vector2.zero; // Stop the rock if neither pushing nor pulling
+            rb.velocity = Vector2.zero;
         }
 
         lastPosition = transform.position;

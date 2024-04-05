@@ -9,16 +9,18 @@ TagManager:
   - Rock
   - Button
   - PlayerAttack
+  - volume
+  - Volume Slider
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - pushBlock
   - Water
   - UI
   - text
-  - 
-  - 
+  - player
+  - pushable
   - 
   - 
   - 
@@ -66,4 +68,7 @@ TagManager:
     locked: 0
   - name: UI
     uniqueID: 3357100653
+    locked: 0
+  - name: Fade
+    uniqueID: 2586094639
     locked: 0

@@ -1150,7 +1150,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1902583970}
+      - m_Target: {fileID: 699370373}
         m_TargetAssemblyTypeName: Music, Assembly-CSharp
         m_MethodName: toggleMute
         m_Mode: 1
@@ -1364,6 +1364,7 @@ GameObject:
   m_Component:
   - component: {fileID: 699370372}
   - component: {fileID: 699370371}
+  - component: {fileID: 699370373}
   m_Layer: 0
   m_Name: Music
   m_TagString: Untagged
@@ -1385,7 +1386,7 @@ AudioSource:
   m_PlayOnAwake: 1
   m_Volume: 0.009
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -1482,6 +1483,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &699370373
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 699370370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbffe0e84e1b90049ae9c469407dcb46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  musicSource: {fileID: 699370371}
+  muteButton: {fileID: 542286537}
+  unmuted: {fileID: 21300000, guid: 394651077d91c1a41bd0337939bfc8f8, type: 3}
+  muted: {fileID: 21300000, guid: 306056b3fd66a364faefc34a540e82e7, type: 3}
 --- !u!1 &1029758990
 GameObject:
   m_ObjectHideFlags: 0
@@ -2064,7 +2081,7 @@ GameObject:
   - component: {fileID: 1308155781}
   m_Layer: 5
   m_Name: Volume Slider
-  m_TagString: Untagged
+  m_TagString: Volume Slider
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2506,11 +2523,9 @@ GameObject:
   - component: {fileID: 1902583966}
   - component: {fileID: 1902583965}
   - component: {fileID: 1902583969}
-  - component: {fileID: 1902583970}
-  - component: {fileID: 1902583971}
   m_Layer: 5
   m_Name: Canvas
-  m_TagString: Untagged
+  m_TagString: Volume Slider
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2615,36 +2630,6 @@ MonoBehaviour:
     m_Handle: 0
   mainMenu: {fileID: 2143070757}
   optionsMenu: {fileID: 622391715}
---- !u!114 &1902583970
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1902583964}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fbffe0e84e1b90049ae9c469407dcb46, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  musicSource: {fileID: 699370371}
-  musicButton: {fileID: 542286537}
-  unmuted: {fileID: 21300000, guid: 394651077d91c1a41bd0337939bfc8f8, type: 3}
-  muted: {fileID: 21300000, guid: 306056b3fd66a364faefc34a540e82e7, type: 3}
-  volumeSlider: {fileID: 1308155782}
---- !u!114 &1902583971
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1902583964}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8eeb207462c4dc542992b680f9895ea1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  targetAspectRatio: 1.3333334
 --- !u!1 &1966400612
 GameObject:
   m_ObjectHideFlags: 0

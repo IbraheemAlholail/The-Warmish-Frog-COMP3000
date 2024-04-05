@@ -10,7 +10,6 @@ public class sceneTransition : MonoBehaviour
     public Vector2 playerPos;
     public VectorValue playerMem;
 
-
     public void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Player") && !collision.isTrigger)
@@ -19,4 +18,5 @@ public class sceneTransition : MonoBehaviour
             SceneManager.LoadScene(sceneDestination);
         }
     }
+
 }

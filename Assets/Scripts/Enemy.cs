@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum eState
 {
@@ -10,17 +11,25 @@ public enum eState
 
 public class Enemy : MonoBehaviour
 {
-    // Start is called before the first frame update
     public eState currentEState;
     public floatValue maxHealth;
     private float currentEnemyHealth;
     public string enemyName;
     public int baseAttack;
     public float moveSpeed;
+    public bool hasReward;
+    public GameObject reward;
+    private float currentHealthUI;
+    private float maxHealthUI;
+    public Slider healthBar;
+    
+    
 
     private void Awake()
     {
         currentEnemyHealth = maxHealth.initialVal;
+        currentHealthUI = maxHealth.initialVal;
+        maxHealthUI = maxHealth.initialVal;
     }
     public void Knock(Rigidbody2D currentrb2d, float knockTime, float damage)
     {
@@ -31,9 +40,21 @@ public class Enemy : MonoBehaviour
     private void damageTaken(float damage)
     {
         currentEnemyHealth -= damage;
+        currentHealthUI = currentEnemyHealth;
+        if (healthBar != null) healthBar.value = currentHealthUI / maxHealthUI;
+
         if (currentEnemyHealth <= 0)
         {
-            this.gameObject.SetActive(false);
+            if (hasReward)
+            {
+                reward.transform.position = this.transform.position;
+                this.gameObject.SetActive(false);
+                Instantiate(reward);
+            }
+            else
+            {
+                this.gameObject.SetActive(false);
+            }
         }
     }
 

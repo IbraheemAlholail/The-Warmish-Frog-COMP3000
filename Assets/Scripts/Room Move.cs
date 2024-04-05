@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -7,21 +8,30 @@ using UnityEngine.UI;
 
 public class RoomMove : MonoBehaviour
 {
-    public Vector2 camChangemax;
     public Vector2 camChangemin;
+    public Vector2 camChangemax;
+    
     public Vector3 playerChange;
     private CameraMovement cam;
 
     public bool hasTitle;
+    public bool hasFade;
     public string titleText;
     public TextMeshProUGUI textOnScreen;
-    public float displayTime;
-    public Color startingTextColor;
+    public Image fadeScreen;
+    
+    public float textDisplayTime;
+    public float fadeDisplayTime;
+    public Color TextColor;
     public int textSize;
 
     public float startPositionY;
     public float endPositionY;
     public float fadeInDuration;
+    public float fadeOutDuration;
+
+    public float textFadeInDuration;
+    public float textFadeOutDuration;
 
     private Coroutine placeNameCoroutine;
 
@@ -34,17 +44,70 @@ public class RoomMove : MonoBehaviour
     {
         if (collision.CompareTag("Player") && !collision.isTrigger)
         {
-            cam.minPos = camChangemin;
-            cam.maxPos = camChangemax;
-            collision.transform.position += playerChange;
-
-            if (hasTitle)
+            if (hasTitle && !hasFade)
             {
+                cam.minPos = camChangemin;
+                cam.maxPos = camChangemax;
+                collision.transform.position += playerChange;
                 StopAllCoroutines();
                 placeNameCoroutine = StartCoroutine(placeNameCo());
             }
+            if (hasFade)
+            {
+                fadeScreen.gameObject.SetActive(true);
+                StartCoroutine(fadeCo(fadeScreen));
+            }
         }
     }
+
+    private IEnumerator fadeCo(Image fadeScreen)
+    {
+        PlayerMovement player = FindObjectOfType<PlayerMovement>();
+        Color fadeColor = fadeScreen.color;
+        fadeColor.a = 0f; 
+        fadeScreen.color = fadeColor;
+        player.currentState = PlayerState.stunned;
+        bool tp = true;
+
+        while (fadeColor.a < 1f)
+        {
+            fadeColor.a += Time.deltaTime / fadeInDuration;
+            fadeScreen.color = fadeColor;
+            
+            if (fadeColor.a >= 0.8f && tp)
+            {
+                cam.minPos = camChangemin;
+                cam.maxPos = camChangemax;
+                player.transform.position += playerChange;
+                tp = false;
+            }
+
+            yield return null;
+        }
+
+        fadeColor.a = 1f;
+        fadeScreen.color = fadeColor;
+
+        yield return new WaitForSeconds(fadeDisplayTime);        
+
+        while (fadeColor.a > 0f)
+        {
+            fadeColor.a -= Time.deltaTime / fadeOutDuration;
+            fadeScreen.color = fadeColor;
+            if (fadeColor.a <= 0.8f)
+            {
+                player.currentState = PlayerState.idle;
+            }
+            yield return null;
+        }
+        fadeScreen.gameObject.SetActive(false);
+        if (hasTitle)
+        {
+            StopAllCoroutines();
+            placeNameCoroutine = StartCoroutine(placeNameCo());
+        }
+    }
+
 
     private IEnumerator placeNameCo()
     {
@@ -57,16 +120,15 @@ public class RoomMove : MonoBehaviour
         startPos.y = startPositionY;
         rectTransform.localPosition = startPos;
 
-        Color textColor = startingTextColor;
+        Color textColor = TextColor;
         textColor.a = 0f;
         textOnScreen.color = textColor;
-
+        
         float elapsedTime = 0f;
 
-        // Fade in and move text from startPositionY to endPositionY
-        while (elapsedTime < fadeInDuration)
+        while (elapsedTime < textFadeInDuration)
         {
-            float t = elapsedTime / fadeInDuration;
+            float t = elapsedTime / textFadeInDuration;
             textColor.a = Mathf.Lerp(0f, 1f, t);
             textOnScreen.color = textColor;
 
@@ -74,15 +136,14 @@ public class RoomMove : MonoBehaviour
             rectTransform.localPosition = newPos;
 
             elapsedTime += Time.deltaTime;
-            yield return null; // Wait for the next frame
+            yield return null; 
         }
 
-        // Ensure the final position and alpha are set correctly
         rectTransform.localPosition = new Vector3(startPos.x, endPositionY, startPos.z);
         textColor.a = 1f;
         textOnScreen.color = textColor;
 
-        yield return new WaitForSeconds(displayTime);
+        yield return new WaitForSeconds(textDisplayTime);
         textOnScreen.enabled = false;
     }
 }

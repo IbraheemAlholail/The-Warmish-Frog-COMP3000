@@ -6,32 +6,42 @@ using UnityEngine.UI;
 public class Music : MonoBehaviour
 {
     public AudioSource musicSource;
-    public GameObject musicButton;
+    public GameObject muteButton;
     public Sprite unmuted;
     public Sprite muted;
-    public Slider volumeSlider;
+    private Slider volumeSlider;
 
 
     void Start()
     {
+        if (volumeSlider == null)
+        {
+            volumeSlider = GameObject.FindGameObjectWithTag("Volume Slider").GetComponent<Slider>();
+        }
+        DontDestroyOnLoad(gameObject);
         musicSource.Play();
-        
     }
+
     private void Update()
     {
-        musicSource.volume = volumeSlider.value;
+        if (volumeSlider == null) volumeSlider = GameObject.FindGameObjectWithTag("Volume Slider").GetComponentInChildren<Slider>();
+
+        if (volumeSlider != null)
+        {
+            musicSource.volume = volumeSlider.value;
+        }
     }
     public void toggleMute()
     {
         if (musicSource.isPlaying)
         {
             musicSource.Pause();
-            musicButton.GetComponent<UnityEngine.UI.Image>().sprite = unmuted;
+            muteButton.GetComponent<UnityEngine.UI.Image>().sprite = unmuted;
         }
         else
         {
             musicSource.Play();
-            musicButton.GetComponent<UnityEngine.UI.Image>().sprite = muted;
+            muteButton.GetComponent<UnityEngine.UI.Image>().sprite = muted;
         }
     }
 

@@ -24,6 +24,7 @@ public class PlayerMovement : MonoBehaviour
 {
     public PlayerState currentState;
     private PlayerDirection direction;
+    public bool godMode;
     public float moveSpeed;
     private Rigidbody2D rb2d;
     private Vector2 change;
@@ -36,16 +37,23 @@ public class PlayerMovement : MonoBehaviour
 
     public VectorValue startPos;
 
+    public int coins = 0;
+    public int keys = 0;
+    public string specialKey = "";
+
 
 
     void Start()
     {
+        this.gameObject.SetActive(true);
         rb2d = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         animator.SetFloat("moveX", 0);
         animator.SetFloat("moveY", -1);
         currentState = PlayerState.walk;
         transform.position = startPos.initVal;
+        playerHealthManager phm = FindObjectOfType<playerHealthManager>();
+        phm.updateHealth();
     }
     private void OnEnable()
     {
@@ -63,6 +71,12 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        checkHealth();
+        playerHealthManager phm = FindObjectOfType<playerHealthManager>();
+        if (phm != null)
+        {
+            phm.updateHealth();
+        }
         change = Vector2.zero;
         change = movInput.ReadValue<Vector2>();
         change.Normalize();
@@ -77,11 +91,11 @@ public class PlayerMovement : MonoBehaviour
             currentState = PlayerState.pulling;
             UpdateAnimationAndMove();
         }
-        else if (currentState == PlayerState.pulling && pullInput.phase != InputActionPhase.Started) 
+        else if (currentState == PlayerState.pulling && pullInput.phase != InputActionPhase.Started)
         {
             currentState = PlayerState.walk;
         }
-        else if(currentState != PlayerState.attack && currentState != PlayerState.stunned && currentState != PlayerState.pulling)
+        else if (currentState != PlayerState.attack && currentState != PlayerState.stunned && currentState != PlayerState.pulling)
         {
             UpdateAnimationAndMove();
         }
@@ -112,14 +126,14 @@ public class PlayerMovement : MonoBehaviour
 
     void UpdateAnimationAndMove()
     {
-        
+
         if (change != Vector2.zero)
         {
             if (currentState == PlayerState.pulling)
             {
-                rb2d.MovePosition(rb2d.position + change/2);
+                rb2d.MovePosition(rb2d.position + change / 2);
             }
-            else if(currentState != PlayerState.pulling)
+            else if (currentState != PlayerState.pulling)
             {
                 rb2d.MovePosition(rb2d.position + change);
                 animator.SetFloat("moveX", change.x);
@@ -130,23 +144,47 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            animator.SetBool("moving", false);   
+            animator.SetBool("moving", false);
         }
     }
 
-    public void Knock(float knockTime, float damage) 
+    public void Knock(float knockTime, float damage)
     {
-        currentHealth.Runtimeval -= damage;
-        playerHealthSignal.Raise();
-        if (currentHealth.Runtimeval > 0)
+        if (godMode && currentHealth.Runtimeval == 1)
         {
-            StartCoroutine(KnockCo(knockTime));
+            Debug.Log("God mode");
+            currentHealth.Runtimeval = 1;
         }
-        else //player is dead
+        else
         {
+            Debug.Log("Knockback");
+            currentHealth.Runtimeval -= damage;
+            playerHealthSignal.Raise();
+            checkHealth();
+            if (currentHealth.Runtimeval > 0)
+            {
+                StartCoroutine(KnockCo(knockTime));
+            }
+            else //player is dead
+            {
+                checkHealth();
+            }
+        }
+
+    }
+
+    private bool checkHealth()
+    {
+        bool isDead = false;
+        if (currentHealth.Runtimeval <= 0)
+        {
+            currentHealth.Runtimeval = 0;
             this.gameObject.SetActive(false);
+            PauseMenu pauseMenu = FindObjectOfType<PauseMenu>();
+            pauseMenu.onDeath();
+            isDead = true;
         }
-        
+        return isDead;
     }
 
     private IEnumerator KnockCo(float knockTime)
@@ -165,9 +203,9 @@ public class PlayerMovement : MonoBehaviour
         if ((vCheck.x == 0 && vCheck.y > 0) || (vCheck.x < 0 && vCheck.y > 0) || (vCheck.x > 0 && vCheck.y > 0))
         {
             direction = PlayerDirection.up;
-        
+
         }
-        else if ((vCheck.x == 0 && vCheck.y < 0) || (vCheck.x <0 && vCheck.y <0) || (vCheck.x >0 && vCheck.y <0))
+        else if ((vCheck.x == 0 && vCheck.y < 0) || (vCheck.x < 0 && vCheck.y < 0) || (vCheck.x > 0 && vCheck.y < 0))
         {
             direction = PlayerDirection.down;
         }

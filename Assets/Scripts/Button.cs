@@ -12,7 +12,11 @@ public class Button : MonoBehaviour
     private int objectsOnButton = 0;
     public int objectsToPress = 1;
 
-    public static bool isPressed = false;
+    private static bool isPressed = false;
+    public bool allowPlayer = true;
+    public bool SpriteIsHidden = false;
+    public bool textIsHidden = false;
+    public bool makeSolid = false;
 
     public GameObject connectedDoor;
 
@@ -20,47 +24,77 @@ public class Button : MonoBehaviour
     {
         buttonSprite = GetComponent<SpriteRenderer>();
         buttonSprite.sprite = ButtonSprite;
-
         buttonText = GetComponentInChildren<TextMeshPro>();
         UpdateButtonText();
+        UpdateButtonSprite();
     }
 
     private void Update()
     {
         UpdateButtonText();
+        UpdateButtonSprite();
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player") && collision.isTrigger || collision.CompareTag("Rock"))
+        if (allowPlayer)
         {
-            
-            objectsOnButton++;
-            
-            UpdateButtonText();
-            if (objectsOnButton >= objectsToPress)
+            if (collision.CompareTag("Player") && collision.isTrigger || collision.CompareTag("Rock"))
             {
-                buttonSprite.sprite = pressedButtonSprite;
-                isPressed = true;
-
-                if (connectedDoor != null)
+                objectsOnButton++;
+                if (objectsOnButton >= objectsToPress)
                 {
-                    connectedDoor.GetComponent<Door>().OpenDoor();
+                    isPressed = true;
+                    if (makeSolid) collision.GetComponent<PushMovement>().solid = true;
+
+                    if (connectedDoor != null)
+                    {
+                        connectedDoor.GetComponent<Door>().OpenDoor();
+                    }
                 }
             }
         }
+        else
+        {
+            if (collision.CompareTag("Rock"))
+            {
+                objectsOnButton++;
+                if (objectsOnButton >= objectsToPress)
+                {
+                    isPressed = true;
+                    if (makeSolid) collision.GetComponent<PushMovement>().solid = true;
+                    if (connectedDoor != null)
+                    {
+                        connectedDoor.GetComponent<Door>().OpenDoor();
+                    }
+                }
+            }
+        }
+
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player") && collision.isTrigger || collision.CompareTag("Rock"))
+        if (allowPlayer)
+        {
+            if (collision.CompareTag("Player") && collision.isTrigger || collision.CompareTag("Rock"))
+            {
+                objectsOnButton--;
+                if (objectsOnButton < objectsToPress)
+                {
+                    isPressed = false;
+                    if (connectedDoor != null)
+                    {
+                        connectedDoor.GetComponent<Door>().CloseDoor();
+                    }
+                }
+            }
+        }
+        else if (collision.CompareTag("Rock"))
         {
             objectsOnButton--;
-            UpdateButtonText();
             if (objectsOnButton < objectsToPress)
             {
-                buttonSprite.sprite = ButtonSprite;
                 isPressed = false;
-
                 if (connectedDoor != null)
                 {
                     connectedDoor.GetComponent<Door>().CloseDoor();
@@ -71,18 +105,44 @@ public class Button : MonoBehaviour
 
     private void UpdateButtonText()
     {
-        int displayNumber = objectsToPress - objectsOnButton;
-        if (displayNumber >= 0)
+        if (!textIsHidden)
         {
-            buttonText.text = (objectsToPress-objectsOnButton).ToString(); 
-        }
-        else if (displayNumber > objectsToPress)
-        {
-            buttonText.text = objectsToPress.ToString();
+            int displayNumber = objectsToPress - objectsOnButton;
+            if (displayNumber >= 0)
+            {
+                buttonText.text = (objectsToPress - objectsOnButton).ToString();
+            }
+            else if (displayNumber > objectsToPress)
+            {
+                buttonText.text = objectsToPress.ToString();
+            }
+            else
+            {
+                buttonText.text = "0";
+            }
         }
         else
         {
-            buttonText.text = "0";
+            buttonText.text = "";
+        }
+    }
+
+    private void UpdateButtonSprite()
+    {
+        if (!SpriteIsHidden)
+        {
+            if (isPressed)
+            {
+                buttonSprite.sprite = pressedButtonSprite;
+            }
+            else
+            {
+                buttonSprite.sprite = ButtonSprite;
+            }
+        }
+        else
+        {
+            buttonSprite.sprite = null;
         }
     }
 }

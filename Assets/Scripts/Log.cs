@@ -1,16 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Log : Enemy
 {
     public Transform home;
     public Transform target;
+    private NavMeshAgent agent;
     public float chaseRadius;
     public float attackRadius;
     private bool hit;
     private Rigidbody2D rb;
     public Animator anim;
+
 
     public bool Hit
     {
@@ -25,6 +28,9 @@ public class Log : Enemy
         rb = GetComponent<Rigidbody2D>();
         currentEState = eState.idle;
         anim.SetBool("wakeUp", false);
+        agent = GetComponent<NavMeshAgent>();
+        agent.updateRotation = false;
+        agent.updateUpAxis = false;
     }
 
     void FixedUpdate()
@@ -32,6 +38,10 @@ public class Log : Enemy
         if (currentEState != eState.stunned)
         {
             moveLog();
+        }
+        else
+        {
+            agent.enabled = false;
         }
     }
 
@@ -42,9 +52,9 @@ public class Log : Enemy
         if (distanceToTarget <= chaseRadius && distanceToTarget >= attackRadius)
         {
             Vector2 directionToTarget = (target.position - transform.position).normalized;
-            Vector2 newPosition = (Vector2)transform.position + directionToTarget * moveSpeed * Time.deltaTime;
             changeAnim(directionToTarget);
-            transform.position = newPosition;
+            agent.enabled = true;
+            agent.SetDestination(target.position);
             currentEState = eState.walk;
             anim.SetBool("wakeUp", true);
         }
@@ -54,24 +64,35 @@ public class Log : Enemy
             currentEState = eState.walk;
             anim.SetBool("wakeUp", true);
         }
-        else if (distanceToTarget > chaseRadius && transform.position != home.position)
+        else if (distanceToTarget > chaseRadius && Vector2.Distance(home.position, transform.position) > 0.1)
         {
             Vector2 directionToHome = (home.position - transform.position).normalized;
             changeAnim(directionToHome);
-            transform.position = Vector2.MoveTowards(transform.position, home.position, moveSpeed * Time.deltaTime);
+            if (Vector2.Distance(home.position, transform.position) > 0.5f)
+            {
+                agent.enabled = true;
+                agent.SetDestination(home.position);
+
+            }
+            else if (Vector2.Distance(home.position, transform.position) <= 0.5f)
+            {
+                agent.enabled = false;
+                transform.position = Vector2.MoveTowards(transform.position, home.position, moveSpeed * Time.deltaTime);
+            }
             currentEState = eState.walk;
             anim.SetBool("wakeUp", true);
         }
-        else if (transform.position == home.position)
+        else if (Vector2.Distance(home.position, transform.position) <= 0.1)
         {
+            currentEState = eState.idle;
             anim.SetBool("wakeUp", false);
         }
-        
+
     }
 
     private void changeEState(eState newEstate)
     {
-        if(currentEState != newEstate)
+        if (currentEState != newEstate)
         {
             currentEState = newEstate;
         }
@@ -79,12 +100,13 @@ public class Log : Enemy
 
     private void changeAnim(Vector2 direction)
     {
-        if(Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
+        if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
         {
-            if(direction.x > 0)
+            if (direction.x > 0)
             {
                 setAnimFloat(Vector2.right);
-            }else if(direction.x < 0)
+            }
+            else if (direction.x < 0)
             {
                 setAnimFloat(Vector2.left);
             }
@@ -104,7 +126,7 @@ public class Log : Enemy
 
     private void setAnimFloat(Vector2 setV)
     {
-        anim.SetFloat("moveX" , setV.x);
+        anim.SetFloat("moveX", setV.x);
         anim.SetFloat("moveY", setV.y);
     }
 

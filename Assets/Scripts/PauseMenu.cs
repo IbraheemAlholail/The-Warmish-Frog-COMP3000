@@ -7,7 +7,12 @@ public class PauseMenu : MonoBehaviour
 {
     public static bool GameIsPaused = false;
     public GameObject pauseMenuUI;
-    public GameObject otherCanvas;
+    public GameObject GUIPanel;
+    public GameObject deathPanel;
+    public GameObject winPanel;
+    public GameObject deathMusic;
+
+
 
     void Update()
     {
@@ -20,6 +25,7 @@ public class PauseMenu : MonoBehaviour
             else
             {
                 PauseGame();
+                fixSlider();
             }
         }
   
@@ -28,7 +34,7 @@ public class PauseMenu : MonoBehaviour
     public void ResumeGame()
     {
         pauseMenuUI.SetActive(false);
-        otherCanvas.SetActive(true);
+        GUIPanel.SetActive(true);
         Time.timeScale = 1f;
         GameIsPaused = false;
     }
@@ -36,7 +42,7 @@ public class PauseMenu : MonoBehaviour
     void PauseGame()
     {
         pauseMenuUI.SetActive(true);
-        otherCanvas.SetActive(false);
+        GUIPanel.SetActive(false);
         Time.timeScale = 0f;
         GameIsPaused = true;
     }
@@ -49,7 +55,40 @@ public class PauseMenu : MonoBehaviour
 
     public void LoadMenu()
     {
+        Destroy(GameObject.Find("Music"));
         SceneManager.LoadScene("MainMenu");
     }
 
+    public void RestartGame()
+    {
+
+        SceneManager.LoadScene("Overworld");
+        ResumeGame();
+    }
+
+    public void onDeath()
+    {
+        Time.timeScale = 0f;
+        deathPanel.SetActive(true);
+        GUIPanel.SetActive(false);
+        GameObject.Find("Music").GetComponent<Music>().musicSource.Stop();
+        deathMusic.SetActive(true);
+        deathMusic.GetComponent<AudioSource>().Play();
+        deathMusic.GetComponent<AudioSource>().volume = GameObject.Find("Music").GetComponent<Music>().musicSource.volume;
+    }
+
+    public void fixSlider()
+    {
+        GameObject.Find("Volume Slider").GetComponent<UnityEngine.UI.Slider>().value = GameObject.Find("Music").GetComponent<Music>().musicSource.volume;
+    }
+
+    public void onWin()
+    {
+        Time.timeScale = 0f;
+        winPanel.SetActive(true);
+        GUIPanel.SetActive(false);
+    }
+    
 }
+
+

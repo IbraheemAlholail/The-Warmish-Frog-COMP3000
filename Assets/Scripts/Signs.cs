@@ -8,14 +8,8 @@ public class Signs : MonoBehaviour
     public GameObject dialogBox;
     public Text dialogText;
     public string dialog;
-    public bool playerInRange;
+    private bool playerInRange;
 
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
     void Update()
     {
         if(Input.GetButtonDown("interact") && playerInRange) 
