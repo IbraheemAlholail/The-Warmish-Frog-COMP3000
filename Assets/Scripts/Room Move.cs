@@ -33,11 +33,15 @@ public class RoomMove : MonoBehaviour
     public float textFadeInDuration;
     public float textFadeOutDuration;
 
-    private Coroutine placeNameCoroutine;
+    private IEnumerator placeNameCoroutine;
+    private IEnumerator fadeCoroutine;
 
     void Start()
     {
         cam = Camera.main.GetComponent<CameraMovement>();
+        fadeCoroutine = fadeCo(fadeScreen);
+        placeNameCoroutine = placeNameCo();
+
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -49,19 +53,26 @@ public class RoomMove : MonoBehaviour
                 cam.minPos = camChangemin;
                 cam.maxPos = camChangemax;
                 collision.transform.position += playerChange;
-                StopAllCoroutines();
-                placeNameCoroutine = StartCoroutine(placeNameCo());
+                StopCoroutine(placeNameCoroutine);
+                StartCoroutine(placeNameCoroutine);
             }
             if (hasFade)
             {
-                fadeScreen.gameObject.SetActive(true);
-                StartCoroutine(fadeCo(fadeScreen));
+                if (fadeCoroutine != null)
+                {
+                    StopCoroutine(fadeCoroutine);
+                    fadeCoroutine = null;
+                    Debug.Log("StopCoroutine " + fadeCoroutine);
+                }
+                fadeCoroutine = fadeCo(fadeScreen);
+                StartCoroutine(fadeCoroutine);
             }
         }
     }
 
     private IEnumerator fadeCo(Image fadeScreen)
     {
+        fadeScreen.gameObject.SetActive(true);
         PlayerMovement player = FindObjectOfType<PlayerMovement>();
         Color fadeColor = fadeScreen.color;
         fadeColor.a = 0f; 
@@ -71,6 +82,7 @@ public class RoomMove : MonoBehaviour
 
         while (fadeColor.a < 1f)
         {
+
             fadeColor.a += Time.deltaTime / fadeInDuration;
             fadeScreen.color = fadeColor;
             
@@ -100,11 +112,13 @@ public class RoomMove : MonoBehaviour
             }
             yield return null;
         }
+
         fadeScreen.gameObject.SetActive(false);
+
         if (hasTitle)
         {
-            StopAllCoroutines();
-            placeNameCoroutine = StartCoroutine(placeNameCo());
+            StopCoroutine(placeNameCoroutine);
+            StartCoroutine(placeNameCoroutine);
         }
     }
 
