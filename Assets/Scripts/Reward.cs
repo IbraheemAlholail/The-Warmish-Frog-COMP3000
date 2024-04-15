@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Reward : MonoBehaviour
@@ -10,13 +11,16 @@ public class Reward : MonoBehaviour
         health,
         win,
         key,
-        specialKey
+        specialKey,
+        powerUp
     }
+
     public int rewardAmount;
     public RewardType pickup;
     public AudioClip pickupSound;
     private AudioSource audioSource;
     public string specialKeyName;
+    public powerUp powerUp;
 
 
 
@@ -79,6 +83,15 @@ public class Reward : MonoBehaviour
                         Destroy(gameObject);
                         PlayerMovement player = FindObjectOfType<PlayerMovement>();
                         player.specialKey = specialKeyName;
+                        break;
+                    }
+                case RewardType.powerUp:
+                    {
+                        audioSource.clip = pickupSound;
+                        audioSource.Play();
+                        Destroy(gameObject);
+                        PlayerMovement player = FindObjectOfType<PlayerMovement>();
+                        player.powerUps.Add(powerUp);
                         break;
                     }
             }

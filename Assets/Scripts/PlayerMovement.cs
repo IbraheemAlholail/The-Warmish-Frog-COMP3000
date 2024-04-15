@@ -20,10 +20,16 @@ public enum PlayerDirection
     up, down, left, right
 }
 
+public enum powerUp
+{
+    gun
+}
+
+
 public class PlayerMovement : MonoBehaviour
 {
     public PlayerState currentState;
-    private PlayerDirection direction;
+    public PlayerDirection direction;
     public bool godMode;
     public float moveSpeed;
     private Rigidbody2D rb2d;
@@ -40,6 +46,7 @@ public class PlayerMovement : MonoBehaviour
     public int coins = 0;
     public int keys = 0;
     public string specialKey = "";
+    public List<powerUp> powerUps = new List<powerUp>();
 
 
 
@@ -77,6 +84,7 @@ public class PlayerMovement : MonoBehaviour
         {
             phm.updateHealth();
         }
+
         change = Vector2.zero;
         change = movInput.ReadValue<Vector2>();
         change.Normalize();
