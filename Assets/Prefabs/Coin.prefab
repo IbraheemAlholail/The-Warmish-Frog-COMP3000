@@ -31,7 +31,7 @@ Transform:
   m_GameObject: {fileID: 1377825600627313134}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -56.505863, y: 75.68015, z: -1.0833234}
+  m_LocalPosition: {x: -73.22599, y: 123.78036, z: -1.0833292}
   m_LocalScale: {x: 0.5369028, y: 0.644, z: 0.644}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -141,6 +141,7 @@ MonoBehaviour:
   pickup: 0
   pickupSound: {fileID: 8300000, guid: aaa33372c68203c4082766b1f1e28c19, type: 3}
   specialKeyName: 
+  powerUp: 0
 --- !u!58 &6998864066156367325
 CircleCollider2D:
   m_ObjectHideFlags: 0

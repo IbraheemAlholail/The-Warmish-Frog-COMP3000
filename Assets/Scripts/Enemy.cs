@@ -22,6 +22,7 @@ public class Enemy : MonoBehaviour
     private float currentHealthUI;
     private float maxHealthUI;
     public Slider healthBar;
+    public GameObject parentObject;
     
     
 
@@ -48,12 +49,12 @@ public class Enemy : MonoBehaviour
             if (hasReward)
             {
                 reward.transform.position = this.transform.position;
-                this.gameObject.SetActive(false);
+                Destroy(parentObject);
                 Instantiate(reward);
             }
             else
             {
-                this.gameObject.SetActive(false);
+                Destroy(parentObject);
             }
         }
     }

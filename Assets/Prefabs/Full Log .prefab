@@ -388,6 +388,7 @@ MonoBehaviour:
   hasReward: 1
   reward: {fileID: 1377825600627313134, guid: fd25ca4836097784d9fda1dd150c6552, type: 3}
   healthBar: {fileID: 0}
+  parentObject: {fileID: 6869068729526447500}
   home: {fileID: 4490518250744493828}
   target: {fileID: 0}
   chaseRadius: 5

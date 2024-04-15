@@ -11,12 +11,18 @@ public class Door : MonoBehaviour
     private PlayerMovement player;
     public AudioClip doorOpenSound;
     private AudioSource audioSource;
+    public enum DoorType
+    {
+        key,
+        enemy,
+        secretKey
+    }
 
     private bool isOpen = false;
-    public bool needsKey = false;
-    public bool needsSpecialKey = false;
+    public DoorType thisDoorType;
     public bool destroyOnUnlock = false;
     public string specialKey;
+    public GameObject enemyToDefeat;
 
     void Start()
     {
@@ -27,24 +33,37 @@ public class Door : MonoBehaviour
         audioSource = player.GetComponentInChildren<AudioSource>();
     }
 
+    private void Update()
+    {
+        if (thisDoorType == DoorType.enemy)
+        {
+            if (enemyToDefeat == null)
+            {
+                OpenDoor();
+            }
+        }
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (needsKey && collision.CompareTag("Player") && collision.isTrigger)
+        switch (thisDoorType)
         {
-            player = collision.GetComponent<PlayerMovement>();
-            if (player.keys > 0)
-            {
-                player.keys--;
-                OpenDoor();
-            }
-        }else if (needsSpecialKey && collision.CompareTag("Player") && collision.isTrigger)
-        {
-            player = collision.GetComponent<PlayerMovement>();
-            if (player.specialKey == specialKey)
-            {
-                player.specialKey = "";
-                OpenDoor();
-            }
+            case DoorType.key when collision.CompareTag("Player") && collision.isTrigger:
+                player = collision.GetComponent<PlayerMovement>();
+                if (player.keys > 0)
+                {
+                    player.keys--;
+                    OpenDoor();
+                }
+                break;
+            case DoorType.secretKey when collision.CompareTag("Player") && collision.isTrigger:
+                player = collision.GetComponent<PlayerMovement>();
+                if (player.specialKey == specialKey)
+                {
+                    player.specialKey = "";
+                    OpenDoor();
+                }
+                break;
         }
     }
 
