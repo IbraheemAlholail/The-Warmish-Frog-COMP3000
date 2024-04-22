@@ -31,12 +31,15 @@ public class PlayerMovement : MonoBehaviour
     public PlayerState currentState;
     public PlayerDirection direction;
     public bool godMode;
+
     public float moveSpeed;
-    private Rigidbody2D rb2d;
     private Vector2 change;
-    private Animator animator;
+    private Rigidbody2D rb2d;
     public InputAction movInput;
+
     public InputAction pullInput;
+
+    private Animator animator;
 
     public floatValue currentHealth;
     public signal playerHealthSignal;
@@ -78,6 +81,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        // Check player health and update health bar
         checkHealth();
         playerHealthManager phm = FindObjectOfType<playerHealthManager>();
         if (phm != null)
@@ -85,27 +89,27 @@ public class PlayerMovement : MonoBehaviour
             phm.updateHealth();
         }
 
-        change = Vector2.zero;
-        change = movInput.ReadValue<Vector2>();
-        change.Normalize();
-        change *= moveSpeed * Time.fixedDeltaTime;
+        // Check for player input
 
-        if (Input.GetButtonDown("attack") && currentState != PlayerState.attack && currentState != PlayerState.stunned && currentState != PlayerState.pulling)
+        if (Input.GetButtonDown("attack") && currentState != PlayerState.attack 
+            && currentState != PlayerState.stunned && currentState != PlayerState.pulling)
         {
-            StartCoroutine(AttackCo());
+            StartCoroutine(AttackCo()); // Attack
         }
-        else if (pullInput.phase == InputActionPhase.Started)
+        else if ((pullInput.phase == InputActionPhase.Started ||
+            pullInput.phase == InputActionPhase.Performed) &&
+            currentState != PlayerState.attack)
         {
-            currentState = PlayerState.pulling;
+            currentState = PlayerState.pulling; // Pull
             UpdateAnimationAndMove();
         }
         else if (currentState == PlayerState.pulling && pullInput.phase != InputActionPhase.Started)
         {
-            currentState = PlayerState.walk;
+            currentState = PlayerState.idle; // Stop pulling
         }
         else if (currentState != PlayerState.attack && currentState != PlayerState.stunned && currentState != PlayerState.pulling)
         {
-            UpdateAnimationAndMove();
+            UpdateAnimationAndMove(); // Move
         }
     }
 
@@ -134,6 +138,10 @@ public class PlayerMovement : MonoBehaviour
 
     void UpdateAnimationAndMove()
     {
+        change = Vector2.zero;
+        change = movInput.ReadValue<Vector2>();
+        change.Normalize();
+        change *= moveSpeed * Time.fixedDeltaTime;
 
         if (change != Vector2.zero)
         {

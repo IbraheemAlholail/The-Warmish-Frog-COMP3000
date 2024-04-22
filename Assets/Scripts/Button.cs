@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class Button : MonoBehaviour
@@ -19,6 +20,7 @@ public class Button : MonoBehaviour
     public bool makeSolid = false;
 
     public GameObject connectedDoor;
+    public UnityEvent onButtonPress;
 
     private void Start()
     {
@@ -45,7 +47,6 @@ public class Button : MonoBehaviour
                 {
                     isPressed = true;
                     if (makeSolid) collision.GetComponent<PushMovement>().solid = true;
-
                     if (connectedDoor != null)
                     {
                         connectedDoor.GetComponent<Door>().OpenDoor();

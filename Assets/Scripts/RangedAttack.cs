@@ -13,20 +13,45 @@ public class RangedAttack : MonoBehaviour
     public float projectileDamage = 1;
     public float projectileKnockbackTime = 1;
     public float projectileSize = 1;
-    public Vector2 projectileDirection;
+    private Vector2 projectileDirection;
     private bool canFire = true;
 
     private PlayerMovement playerMovement;
+    private Log Log;
+
+    private enum attackUser
+    {
+        player,
+        enemy
+    }
+
+    private attackUser user;
 
     void Start()
     {
         playerMovement = GetComponent<PlayerMovement>();
+        Log = GetComponent<Log>();
+
+        if (playerMovement != null)
+        {
+            user = attackUser.player;
+        }
+        else if (Log != null)
+        {
+            user = attackUser.enemy;
+        }
         
     }
     void Update()
-    {
+    { 
         checkDirection();
-        if (playerMovement.powerUps.Contains(powerUp.gun) && canFire && Input.GetButtonDown("Fire1") && playerMovement.currentState != PlayerState.stunned)
+
+        //check if the object this script is attached to has the playerMovement script
+
+        if (playerMovement.powerUps.Contains(powerUp.gun) &&
+            canFire && Input.GetButtonDown("Fire1") && 
+            playerMovement.currentState != PlayerState.stunned &&
+            playerMovement != null)
         {
             Fire();
             StartCoroutine(FireCooldown());

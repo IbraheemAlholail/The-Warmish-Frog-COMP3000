@@ -52,18 +52,19 @@ public class Reward : MonoBehaviour
                     }
                 case RewardType.health:
                     {
-                        audioSource.clip = pickupSound;
-                        audioSource.Play();
-                        Destroy(gameObject);
                         PlayerMovement player = FindObjectOfType<PlayerMovement>();
                         playerHealthManager phm = FindObjectOfType<playerHealthManager>();
-                        if (player.currentHealth.Runtimeval >= phm.maxHealth.initialVal * 2)
+
+                        if (player.currentHealth.Runtimeval < phm.maxHealth.initialVal * 2)
                         {
-                            return;
-                        }
-                        else
-                        {
+                            audioSource.clip = pickupSound;
+                            audioSource.Play();
+                            Destroy(gameObject);
                             player.currentHealth.Runtimeval += rewardAmount;
+                            if (player.currentHealth.Runtimeval > phm.maxHealth.initialVal * 2)
+                            {
+                                player.currentHealth.Runtimeval = phm.maxHealth.initialVal * 2;
+                            }
                         }
                         break;
                     }
@@ -91,7 +92,12 @@ public class Reward : MonoBehaviour
                         audioSource.Play();
                         Destroy(gameObject);
                         PlayerMovement player = FindObjectOfType<PlayerMovement>();
-                        player.powerUps.Add(powerUp);
+                        switch (powerUp)
+                        {
+                            case powerUp.gun:
+                                if (!player.powerUps.Contains(powerUp.gun)) player.powerUps.Add(powerUp);
+                                break;
+                        }
                         break;
                     }
             }

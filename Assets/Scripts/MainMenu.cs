@@ -19,10 +19,7 @@ public class MainMenu : MonoBehaviour
         Debug.Log("Quitting game...");
         Application.Quit();
     }
-    public void loadOptions()
-    {
-        SceneManager.LoadScene("OptionsMenu");
-    }
+
     public void optionsSwitch()
     {
         if (mainMenu.activeSelf)

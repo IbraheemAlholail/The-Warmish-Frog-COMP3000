@@ -32,24 +32,38 @@ public class DebugStuff : MonoBehaviour
         onButtonPress
     }
 
+    public enum locationType
+    {
+        objectRelative,
+        playerRelative,
+        playerRandomRadius,
+        absolute
+    }
+
     public debugCommands DebugCommand;
     public triggerType TriggerType;
     public KeyCode key;
+    public locationType LocationType;
     private PlayerMovement player;
     private playerHealthManager phm;
     private RoomMove rm;
-    public bool UseRelativePosition;
+
     public float value1;
     public float value2;
     public float value3;
     public string textVal;
     public bool holdPlayer;
     public Vector3 coordinates;
+    private Vector3 newCoords;
     public GameObject objectToUse;
     public Text textObject;
     public Image fadeScreenObj;
     public bool closeOnCommand;
 
+    private void Start()
+    {
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>();
+    }
     void Update()
     {
         if (TriggerType == triggerType.onButtonPress)
@@ -89,6 +103,8 @@ public class DebugStuff : MonoBehaviour
 
     public void doCommand()
     {
+        doCoordinates();
+
         switch (DebugCommand)
         {
             case debugCommands.heal:
@@ -108,24 +124,11 @@ public class DebugStuff : MonoBehaviour
                 break;
             case debugCommands.teleport:
                 player = FindObjectOfType<PlayerMovement>();
-                if (UseRelativePosition)
-                {
-                    player.transform.position += coordinates;
-
-                }
-                else { player.transform.position = coordinates; }
+                player.transform.position = newCoords;
                 break;
             case debugCommands.spawnPrefab:
                 player = FindObjectOfType<PlayerMovement>();
-                if (objectToUse == null)
-                {
-                    Debug.LogError("No object to spawn");
-                    return;
-                }else if (UseRelativePosition)
-                {
-                    Instantiate(objectToUse, player.transform.position + coordinates, Quaternion.identity);
-                }
-                else { Instantiate(objectToUse, coordinates, Quaternion.identity);}
+                Instantiate(objectToUse, newCoords, Quaternion.identity);
                 break;
             case debugCommands.activateDialogue:
                 if (objectToUse == null || textObject == null)
@@ -172,8 +175,6 @@ public class DebugStuff : MonoBehaviour
                     closeOnCommand = false;
                 }
                 break;
-            case debugCommands.pushableBlocker:
-
             default:
                 break;
         }
@@ -235,4 +236,48 @@ public class DebugStuff : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
+    public void doCoordinates()
+    {
+        PlayerMovement player = FindObjectOfType<PlayerMovement>();
+
+        if (LocationType == locationType.objectRelative)
+        {
+            newCoords = Vector3.zero;
+            newCoords.x = this.transform.position.x + value1;
+            newCoords.y = this.transform.position.y + value2;
+        }
+        else if (LocationType == locationType.playerRelative)
+        {
+            newCoords = Vector3.zero;
+            newCoords.x = player.transform.position.x + value1;
+            newCoords.y = player.transform.position.y + value2;
+        }
+        else if (LocationType == locationType.absolute)
+        {
+            newCoords = coordinates;
+        }
+        else if (LocationType == locationType.playerRandomRadius)
+        {
+
+            // Generate random angle and distance
+            float angle = Random.Range(0f, Mathf.PI * 2f);
+            float distance = Mathf.Sqrt(Random.Range(value1 * value1, value2 * value2));
+
+            // Convert to Cartesian coordinates
+            float randomX = Mathf.Cos(angle) * distance;
+            float randomY = Mathf.Sin(angle) * distance;
+
+            // Randomly flip signs
+            if (Random.Range(0, 2) == 0)
+                randomX = -randomX;
+            if (Random.Range(0, 2) == 0)
+                randomY = -randomY;
+
+            // Set final coordinates relative to player
+            newCoords = player.transform.position + new Vector3(randomX, randomY, 0);
+
+        }
+    }
+
 }

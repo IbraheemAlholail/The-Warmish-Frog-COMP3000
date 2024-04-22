@@ -41,6 +41,5 @@ public class Signs : MonoBehaviour
             playerInRange= false;
             dialogBox.SetActive(false);
         }
-        
     }
 }

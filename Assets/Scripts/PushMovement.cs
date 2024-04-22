@@ -20,34 +20,28 @@ public class PushMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         lastPosition = transform.position;
-
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
-
     }
 
     private void Update()
     {
         if (solid) rb.bodyType = RigidbodyType2D.Static;
         checkForPull();
+
         if (isPushing)
         {
-            Vector2 movementDirection = (Vector2)transform.position - lastPosition;
-
-            if (movementDirection != Vector2.zero)
-            {
-                rb.AddForce(movementDirection.normalized * pushForce);
-            }
+           //do nothing
         }
         else if (isPulling)
         {
+            PlayerMovement playerMovement = playerTransform.GetComponent<PlayerMovement>();
             float horizontalInput = Input.GetAxisRaw("Horizontal");
             float verticalInput = Input.GetAxisRaw("Vertical");
             change = Vector2.zero;
             change.x = horizontalInput;
             change.y = verticalInput;
             change.Normalize();
-            change *= 5 * Time.fixedDeltaTime;
-
+            change *= playerMovement.moveSpeed * Time.fixedDeltaTime;
 
             if (change != Vector2.zero)
             {
@@ -87,7 +81,6 @@ public class PushMovement : MonoBehaviour
             if (Vector2.Distance(playerTransform.position, lastPosition) > minDistanceToPull)
             {
                 isPulling = false;
-
             }
             isPulling = true;
         }

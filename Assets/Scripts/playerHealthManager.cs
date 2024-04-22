@@ -20,12 +20,19 @@ public class playerHealthManager : MonoBehaviour
         for (int i = 0;  i < maxHealth.initialVal; i++)
         {
             playerHearts[i].gameObject.SetActive(true);
-            playerHearts[i].sprite= heartSprites[2];
+            playerHearts[i].sprite = heartSprites[2];
         }
+        for (int i = (int)maxHealth.initialVal; i < playerHearts.Length; i++)
+        {
+            playerHearts[i].gameObject.SetActive(false);
+        }
+
     }
 
     public void updateHealth()
     {
+        initializeHearts();
+
         float tempHealth = currentHealth.Runtimeval / 2;
 
         for (int i = 0; i < maxHealth.initialVal; i++)

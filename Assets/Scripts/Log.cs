@@ -62,12 +62,12 @@ public class Log : Enemy
         {
             rb.velocity = Vector2.zero;
             currentEState = eState.walk;
-            anim.SetBool("wakeUp", true);
         }
         else if (distanceToTarget > chaseRadius && Vector2.Distance(home.position, transform.position) > 0.1)
         {
             Vector2 directionToHome = (home.position - transform.position).normalized;
             changeAnim(directionToHome);
+
             if (Vector2.Distance(home.position, transform.position) > 0.5f)
             {
                 agent.enabled = true;
@@ -88,14 +88,6 @@ public class Log : Enemy
             anim.SetBool("wakeUp", false);
         }
 
-    }
-
-    private void changeEState(eState newEstate)
-    {
-        if (currentEState != newEstate)
-        {
-            currentEState = newEstate;
-        }
     }
 
     private void changeAnim(Vector2 direction)
@@ -129,6 +121,4 @@ public class Log : Enemy
         anim.SetFloat("moveX", setV.x);
         anim.SetFloat("moveY", setV.y);
     }
-
-
 }

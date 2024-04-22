@@ -14,12 +14,14 @@ public class Music : MonoBehaviour
 
     void Start()
     {
+        DontDestroyOnLoad(gameObject);
+        musicSource.Play();
+
         if (volumeSlider == null)
         {
             volumeSlider = GameObject.FindGameObjectWithTag("Volume Slider").GetComponent<Slider>();
         }
-        DontDestroyOnLoad(gameObject);
-        musicSource.Play();
+        
     }
 
     private void Update()
