@@ -46143,7 +46143,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -74.18, y: 138.5, z: -10}
+  m_LocalPosition: {x: -34.63, y: -2.07, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -136231,6 +136231,10 @@ PrefabInstance:
     - target: {fileID: 546571393288842303, guid: 5f5cef0bf090ca946ad10575e40a28fb, type: 3}
       propertyPath: specialKey
       value: Red
+      objectReference: {fileID: 0}
+    - target: {fileID: 546571393288842303, guid: 5f5cef0bf090ca946ad10575e40a28fb, type: 3}
+      propertyPath: thisDoorType
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 546571393288842303, guid: 5f5cef0bf090ca946ad10575e40a28fb, type: 3}
       propertyPath: doorOpenSound
